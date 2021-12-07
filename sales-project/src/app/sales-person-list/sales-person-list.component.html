@@ -1,11 +1,12 @@
-<table border="1">
+<table class="table table-hover">
 
-    <thead>
+    <thead class="table-dark">
         <tr>
             <th>First Name </th>
             <th>Last Name </th>
             <th>Email </th>
             <th>Sales Volume </th>
+            <th>Met Quota?</th>
         </tr>
     </thead>
     <tbody>
@@ -14,6 +15,10 @@
             <td>{{ tempSalesPerson.lastName }}</td>
             <td>{{ tempSalesPerson.email }}</td>
             <td>{{ tempSalesPerson.salesVolume }}</td>
+            <td>
+                <div *ngIf="tempSalesPerson.salesVolume >= 60000; else myElseBlock">Yes</div>
+                <ng-template #myElseBlock>No</ng-template>
+            </td>
         </tr>
     </tbody>
 
