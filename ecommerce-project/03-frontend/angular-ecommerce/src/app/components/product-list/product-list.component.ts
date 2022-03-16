@@ -13,30 +13,37 @@ export class ProductListComponent implements OnInit {
 
   products: Product[] = [];
   currentCategoryId: number | undefined;
+  searchWord : string = "";
 
   constructor(private productService: ProductService,
               private route: ActivatedRoute) { }
 
   ngOnInit() { 
-
     this.route.paramMap.subscribe((params: ParamMap) => {
       this.currentCategoryId = parseInt(params.get('id')!);
-      this.listProducts(this.currentCategoryId);
+      this.searchWord = params.get('keyword')!;
+      if (this.currentCategoryId){
+        this.listProducts(this.currentCategoryId);
+      } else if (this.searchWord){
+        this.listSearchProducts(this.searchWord);
+      }
     });
   }
 
-  listProducts(id: number) {
+  listSearchProducts(searchWord: string) {
+    this.productService.getSearchProductList(searchWord).subscribe(
+      data => {
+        this.products = data;
+      }
+    ) 
+  }
 
-    // let give a default value to id
-    if(isNaN(id)) id = 1; 
-
-    // now get the products for the given category id
+  listProducts(id: number) {    
     this.productService.getProductList(id).subscribe(
       data => {
         this.products = data;
       }
-    )
-        
+    )        
   }
 
 }
