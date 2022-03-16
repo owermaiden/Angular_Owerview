@@ -7,8 +7,7 @@ import { ProductCategory } from '../common/product-category';
 @Injectable({
   providedIn: 'root'
 })
-export class ProductService {
-  
+export class ProductService {  
 
   private baseUrl = 'http://localhost:8080/api';
 
@@ -32,6 +31,15 @@ export class ProductService {
       map(response => response._embedded.ProductCategory)
     );
 
+  }
+
+  getSearchProductList(searchWord: string): Observable<Product[]> {
+    
+    const searchUrl = `${this.baseUrl}/products/search/findByNameContaining?name=${searchWord}`;
+
+    return this.httpClient.get<GetResponseProducts>(searchUrl).pipe(
+      map(response => response._embedded.products)
+    );
   }
   
 }
