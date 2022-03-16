@@ -26,10 +26,10 @@ export class ProductService {
 
   getProductCategories() : Observable<ProductCategory[]> {
     
-    const searchUrl = `${this.baseUrl}/product-category`;
+    const searchUrl1 = `${this.baseUrl}/product-category`;
 
-    return this.httpClient.get<GetResponseProductCategory>(searchUrl).pipe(
-      map(response => response._embedded.productCategory)
+    return this.httpClient.get<GetResponseProductCategory>(searchUrl1).pipe(
+      map(response => response._embedded.ProductCategory)
     );
 
   }
@@ -44,6 +44,6 @@ interface GetResponseProducts {
 
 interface GetResponseProductCategory {
   _embedded: {
-    productCategory: ProductCategory[];
+    ProductCategory: ProductCategory[];
   }
 }
