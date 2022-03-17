@@ -7,40 +7,40 @@ import { ProductCategory } from '../common/product-category';
 @Injectable({
   providedIn: 'root'
 })
-export class ProductService {  
+export class ProductService {
 
   private baseUrl = 'http://localhost:8080/api';
 
   constructor(private httpClient: HttpClient) { }
 
-  getProductList(theCategoryId: number): Observable<Product[]> {
-  
-    // need to build URL based on category id...
+  getProductList(theCategoryId: number): Observable<Product[]> {  
     const searchUrl = `${this.baseUrl}/products/search/findByCategoryId?id=${theCategoryId}`;
+    return this.getProducts(searchUrl);
+  }  
 
+  getSearchProductList(searchWord: string): Observable<Product[]> {    
+    const searchUrl = `${this.baseUrl}/products/search/findByNameContaining?name=${searchWord}`;
+    return this.getProducts(searchUrl);
+  }
+
+  private getProducts(searchUrl: string): Observable<Product[]> {
     return this.httpClient.get<GetResponseProducts>(searchUrl).pipe(
       map(response => response._embedded.products)
     );
   }
 
-  getProductCategories() : Observable<ProductCategory[]> {
-    
+  getProductCategories() : Observable<ProductCategory[]> {    
     const searchUrl1 = `${this.baseUrl}/product-category`;
-
     return this.httpClient.get<GetResponseProductCategory>(searchUrl1).pipe(
       map(response => response._embedded.ProductCategory)
     );
 
   }
 
-  getSearchProductList(searchWord: string): Observable<Product[]> {
-    
-    const searchUrl = `${this.baseUrl}/products/search/findByNameContaining?name=${searchWord}`;
-
-    return this.httpClient.get<GetResponseProducts>(searchUrl).pipe(
-      map(response => response._embedded.products)
-    );
-  }
+  getProductById(theProductId: number) : Observable<Product> {
+    const searchUrl2 = `${this.baseUrl}/products/${theProductId}`;
+    return this.httpClient.get<Product>(searchUrl2);
+  }    
   
 }
 

@@ -10,37 +10,64 @@ import { ProductService } from 'src/app/services/product.service';
 })
 export class ProductListComponent implements OnInit {
 
-  products: Product[] = [];
-  currentCategoryId: number | undefined;
-  searchWord : string = "";
+  products!: Product[];
+  currentCategoryId!: number;
+  searchMode!: boolean;
 
   constructor(private productService: ProductService,
               private route: ActivatedRoute) { }
 
   ngOnInit() { 
-    this.route.paramMap.subscribe((params: ParamMap) => {
-      this.listProductsBy(params);
+    this.route.paramMap.subscribe(() => {
+      this.listProducts();
     });
   }
 
-  listProductsBy(params: ParamMap){
+  listProducts() {
 
-    this.currentCategoryId = parseInt(params.get('id')!);
-    this.searchWord = params.get('keyword')!;
+    this.searchMode = this.route.snapshot.paramMap.has('keyword');
 
-    if (this.currentCategoryId){
-      this.productService.getProductList(this.currentCategoryId).subscribe(
-        data => {
-          this.products = data;
-        }
-      ) 
-    } else if (this.searchWord){
-      this.productService.getSearchProductList(this.searchWord).subscribe(
-        data => {
-          this.products = data;
-        }
-      ) 
+    if (this.searchMode) {
+      this.handleSearchProducts();
     }
+    else {
+      this.handleListProducts();
+    }
+
+  }
+
+  handleSearchProducts() {
+
+    const theKeyword: string = this.route.snapshot.paramMap.get('keyword')!;
+
+    // now search for the products using keyword
+    this.productService.getSearchProductList(theKeyword).subscribe(
+      data => {
+        this.products = data;
+      }
+    )
+  }
+
+  handleListProducts() {
+
+    // check if "id" parameter is available
+    const hasCategoryId: boolean = this.route.snapshot.paramMap.has('id');
+
+    if (hasCategoryId) {
+      // get the "id" param string. convert string to a number using the "+" symbol
+      this.currentCategoryId = +this.route.snapshot.paramMap.get('id')!;
+    }
+    else {
+      // not category id available ... default to category id 1
+      this.currentCategoryId = 1;
+    }
+
+    // now get the products for the given category id
+    this.productService.getProductList(this.currentCategoryId).subscribe(
+      data => {
+        this.products = data;
+      }
+    )    
   }
 
 

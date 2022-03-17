@@ -1,0 +1,22 @@
+<div class="detail-section">
+    <div class="container-fluid">
+
+        <div class="row pt-2">
+            <div class="col-md-6">
+                <img src="{{product.imageUrl}}" alt="product" class="datail-img">
+            </div>
+            <div class="col-md-6 mt-5">
+                <hr>
+                <h3>{{product.name}}</h3>
+                <h4>Description</h4>
+                <p>{{product.description}}</p>
+
+                <div class="price" >{{product.unitPrice | currency:'USD'}}</div>
+                <a href="#" class="primary-btn">Add to Cart</a>
+                <hr>              
+                <a routerLink="/products" class="mt-1">Back to Product List</a>
+            </div>
+        </div>    
+    </div>
+</div>
+
