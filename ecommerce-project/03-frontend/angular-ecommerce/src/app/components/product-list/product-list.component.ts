@@ -14,12 +14,14 @@ export class ProductListComponent implements OnInit {
   currentCategoryId: number = 1;
   searchMode: boolean = true;
   previousCategoryId: number = 1;
+  previousKeyword: string="";
 
   // pagination fields
 
   thePageNumber : number = 1;
   thePageSize : number = 5;
   theTotalElements : number = 0;
+  
   
 
   constructor(private productService: ProductService,
@@ -48,40 +50,23 @@ export class ProductListComponent implements OnInit {
 
     const theKeyword: string = this.route.snapshot.paramMap.get('keyword')!;
 
+    if (this.previousKeyword != theKeyword) this.thePageNumber = 1;    
+    this.previousKeyword = theKeyword;  
+
     // now search for the products using keyword
-    this.productService.getSearchProductList(theKeyword).subscribe(
-      data => {
-        this.products = data;
-      }
-    )
+    this.productService.searchProductsPaginate(this.thePageNumber - 1,this.thePageSize,theKeyword)
+        .subscribe(this.processResult()) 
   }
 
   handleListProducts() {
 
-    // check if "id" parameter is available
-    const hasCategoryId: boolean = this.route.snapshot.paramMap.has('id');
+    this.currentCategoryId = this.route.snapshot.paramMap.has('id') ? +this.route.snapshot.paramMap.get('id')! : 1;
 
-    if (hasCategoryId) {
-      // get the "id" param string. convert string to a number using the "+" symbol
-      this.currentCategoryId = +this.route.snapshot.paramMap.get('id')!;
-    }
-    else {
-      // not category id available ... default to category id 1
-      this.currentCategoryId = 1;
-    }
+    if (this.previousCategoryId != this.currentCategoryId) this.thePageNumber = 1;    
+    this.previousCategoryId = this.currentCategoryId;    
 
-
-    if (this.previousCategoryId != this.currentCategoryId){
-      this.thePageNumber = 1;
-    }
-
-    this.previousCategoryId = this.currentCategoryId;
-
-    
-    this.productService.getProductListPaginate(this.thePageNumber - 1,
-                                               this.thePageSize,
-                                               this.currentCategoryId)
-                                               .subscribe(this.processResult())    
+    this.productService.getProductListPaginate(this.thePageNumber - 1,this.thePageSize,this.currentCategoryId)
+        .subscribe(this.processResult());
   }
 
   processResult(){
