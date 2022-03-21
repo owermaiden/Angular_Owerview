@@ -97,10 +97,17 @@ export class CheckoutComponent implements OnInit {
     if (event.target.checked) {
       this.checkoutFormGroup.controls['billingAddress']
             .setValue(this.checkoutFormGroup.controls['shippingAddress'].value);
+
+      // bug fix
+      this.billingAddressStates = this.shippingAddressStates;
     }
     else {
       this.checkoutFormGroup.controls['billingAddress'].reset();
+
+      this.billingAddressStates = [];
     }
+
+
     
   }
 
@@ -117,7 +124,6 @@ export class CheckoutComponent implements OnInit {
   handleMonthsAndYears() {
 
     const creditCardFormGroup = this.checkoutFormGroup.get('creditCard');
-
     const currentYear: number = new Date().getFullYear();
     const selectedYear: number = Number(creditCardFormGroup!.value.expirationYear);
 
