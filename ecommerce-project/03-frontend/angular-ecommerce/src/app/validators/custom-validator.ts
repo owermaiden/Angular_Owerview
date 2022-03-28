@@ -13,7 +13,7 @@ export class CustomValidator {
         }
         else {
             // valid, return null
-            return { 'notOnlyWhitespace': false };
+            return null!;
         }
     }
 }
