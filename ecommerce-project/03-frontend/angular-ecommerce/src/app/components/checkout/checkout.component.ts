@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { pipe } from 'rxjs';
 import { Country } from 'src/app/common/country';
 import { State } from 'src/app/common/state';
+import { CartService } from 'src/app/services/cart.service';
 import { ShoppingService } from 'src/app/services/shopping.service';
 import { CustomValidator } from 'src/app/validators/custom-validator';
 
@@ -26,9 +28,12 @@ export class CheckoutComponent implements OnInit {
   billingAddressStates: State[] = [];
 
   constructor(private formBuilder: FormBuilder,
-              private shoppingService: ShoppingService) { }
+              private shoppingService: ShoppingService,
+              private cartService: CartService) { }
 
   ngOnInit(): void {
+
+    this.reviewCartDetails();
 
     this.checkoutFormGroup = this.formBuilder.group({
       customer: this.formBuilder.group({
@@ -107,6 +112,15 @@ export class CheckoutComponent implements OnInit {
   );
 
   } // ngOninit finishes here...,
+
+  reviewCartDetails() {
+    this.cartService.totalPrice.subscribe(
+      data => this.totalPrice = data
+    );
+    this.cartService.totalQuantity.subscribe(
+      data => this.totalQuantity = data
+    );
+  }
   
   get firstName() { return this.checkoutFormGroup.get('customer.firstName')!; }
   get lastName() { return this.checkoutFormGroup.get('customer.lastName')!; }
@@ -152,6 +166,11 @@ export class CheckoutComponent implements OnInit {
   onSubmit() {
 
     console.log("Handling the submit button");
+
+    // mark all fields as Touched
+    if (this.checkoutFormGroup.invalid) {
+      this.checkoutFormGroup.markAllAsTouched();
+    }
     console.log(this.checkoutFormGroup.get('customer')!.value);
     console.log("The email address is " + this.checkoutFormGroup.get('customer')!.value.email);  
     console.log("The shipping address country is " + this.checkoutFormGroup.get('shippingAddress')!.value.country.name);
